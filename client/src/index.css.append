@@ -1,0 +1,407 @@
+/* ==========================================================================
+   COIN BY ZERODHA STYLE - MUTUAL FUNDS 
+   ========================================================================== */
+
+.mf-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.mf-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.mf-tab {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 1rem 0;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.mf-tab:hover {
+    color: var(--text);
+}
+
+.mf-tab-active {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.mf-tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--primary);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+/* Discover Tab */
+.mf-discover-hero {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.mf-search-container {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    position: relative;
+}
+
+.mf-search-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 1.1rem;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.mf-search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
+}
+
+.mf-search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.mf-search-loader {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.mf-category-pills {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.mf-pill {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1.25rem;
+    border-radius: 20px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mf-pill:hover, .mf-pill.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.mf-discover-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.mf-fund-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.mf-fund-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.mf-fund-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.mf-fund-card-category {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.mf-fund-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.mf-stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.mf-stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.mf-stat-value.green { color: #10b981; }
+.mf-stat-value.red { color: #ef4444; }
+
+.mf-fund-actions {
+    display: flex;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+}
+
+.mf-action-btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem 0;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mf-btn-buy {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.mf-btn-buy:hover {
+    background: var(--primary-hover, #4f46e5);
+}
+
+.mf-btn-sip {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.mf-btn-sip:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+/* Dashboard Tab */
+.mf-dash-hero {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.mf-hero-stat {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.mf-hero-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mf-hero-val {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+}
+
+.mf-hero-sub {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.mf-hero-sub.green { background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 2px 6px; border-radius: 4px; display: inline-block; width: max-content; }
+.mf-hero-sub.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 2px 6px; border-radius: 4px; display: inline-block; width: max-content; }
+
+/* Holdings Table */
+.mf-holdings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mf-holdings-table th {
+    text-align: left;
+    padding: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+}
+
+.mf-holdings-table th.text-right { text-align: right; }
+.mf-holdings-table th.text-center { text-align: center; }
+
+.mf-holdings-table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.mf-holdings-table tr:hover {
+    background: rgba(0,0,0,0.02);
+}
+
+:root[data-theme='dark'] .mf-holdings-table tr:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.mf-td-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.mf-td-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* SIP List */
+.mf-sip-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mf-sip-row {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+}
+
+.mf-sip-row:hover {
+    transform: translateX(4px);
+}
+
+.mf-sip-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.mf-sip-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.mf-sip-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.mf-sip-meta {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.mf-sip-meta-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.mf-sip-meta-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.mf-sip-meta-val {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Orders Tab */
+.mf-order-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.mf-order-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.mf-order-failed { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.mf-order-pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+@media (max-width: 1024px) {
+    .mf-dash-hero { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .mf-dash-hero { grid-template-columns: 1fr; }
+    .mf-sip-row { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .mf-sip-meta { flex-wrap: wrap; gap: 1rem; }
+    .mf-tabs { overflow-x: auto; padding-bottom: 10px; white-space: nowrap; }
+}

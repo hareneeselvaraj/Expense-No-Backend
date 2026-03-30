@@ -1,0 +1,9 @@
+﻿MSBuild version 17.9.8+b34f75857 for .NET
+C:\Users\HareneeS\Downloads\task\Expense-Tracker\ExpenseTracker\Services\Implementations\TransactionService.cs(20,35): error CS0535: 'TransactionService' does not implement interface member 'ITransactionService.UploadAsync(Guid, Guid, Stream, string)' [C:\Users\HareneeS\Downloads\task\Expense-Tracker\ExpenseTracker\ExpenseTracker.csproj]
+C:\Users\HareneeS\Downloads\task\Expense-Tracker\ExpenseTracker\Services\Implementations\TransactionService.cs(20,35): error CS0535: 'TransactionService' does not implement interface member 'ITransactionService.UploadCommitAsync(Guid, IEnumerable<TransactionResponseDto>)' [C:\Users\HareneeS\Downloads\task\Expense-Tracker\ExpenseTracker\ExpenseTracker.csproj]
+
+Build FAILED.
+    2 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:02.14
