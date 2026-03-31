@@ -1,49 +1,27 @@
-# .NET
-bin/
-obj/
-*.user
-*.suo
-# Configuration
-appsettings.json
-appsettings.Development.json
-appsettings.Production.json
-
 # Node
 node_modules/
 dist/
 
+# Environment
+.env
+.env.local
+.env.production
+
 # IDE
-.vs/
 .vscode/
 *.swp
 
 # Logs
 *.log
-budget_trace.log
 
 # OS
 Thumbs.db
 .DS_Store
 
-# Databases & Backups
+# Databases (legacy)
 *.db
 *.db-shm
 *.db-wal
-ExpenseTracker/backups/
 
 # Local Netlify folder
 .netlify
-
-# Local Build Artifacts
-LocalHost/
-ExpenseTracker/wwwroot/
-ExpenseTracker/publish/
-ExpenseTracker/MonsterAspDeploy/
-ExpenseTracker/MonsterAspDeploy.zip
-publish.zip
-/bin/
-/obj/
-**/bin/
-**/obj/
-**/publish/
-**/wwwroot/

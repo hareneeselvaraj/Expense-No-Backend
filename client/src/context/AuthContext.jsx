@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import { signIn, signOut as googleSignOut, restoreSession, silentSignIn, onTokenExpiry } from '../services/googleAuth';
+import { initializeUserData } from '../services/driveStorage';
 
 const AuthContext = createContext(null);
 
@@ -8,42 +9,66 @@ export function AuthProvider({ children }) {
         const saved = localStorage.getItem('user');
         return saved ? JSON.parse(saved) : null;
     });
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const login = async (email, password) => {
-        setLoading(true);
-        try {
-            const { data } = await api.post('/auth/login', { email, password });
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data));
-            setUser(data);
-            return data;
-        } finally {
+    // On mount: check if user was previously signed in
+    useEffect(() => {
+        const restored = restoreSession();
+        if (restored && localStorage.getItem('user')) {
+            setUser(JSON.parse(localStorage.getItem('user')));
+            setLoading(false);
+        } else if (localStorage.getItem('user')) {
+            // Token expired, try silent re-auth
+            silentSignIn()
+                .then((userData) => {
+                    setUser(userData);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    // Silent re-auth failed, clear state
+                    localStorage.removeItem('user');
+                    setUser(null);
+                    setLoading(false);
+                });
+        } else {
             setLoading(false);
         }
-    };
 
-    const register = async (name, email, password) => {
+        // Register token expiry callback
+        onTokenExpiry(() => {
+            silentSignIn()
+                .then((userData) => setUser(userData))
+                .catch(() => {
+                    setUser(null);
+                    localStorage.removeItem('user');
+                });
+        });
+    }, []);
+
+    const login = async () => {
         setLoading(true);
         try {
-            const { data } = await api.post('/auth/register', { name, email, password });
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data));
-            setUser(data);
-            return data;
+            const userData = await signIn();
+            setUser(userData);
+            // Initialize user data in Drive if first-time user
+            try {
+                await initializeUserData();
+            } catch (e) {
+                console.warn('User data initialization skipped or failed:', e);
+            }
+            return userData;
         } finally {
             setLoading(false);
         }
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        googleSignOut();
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );

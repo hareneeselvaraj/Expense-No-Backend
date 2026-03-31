@@ -45,6 +45,7 @@ export default function WealthDashboard() {
 
 
     useEffect(() => {
+        if (!user) return;
         setLoading(true);
         Promise.all([
             api.get('/portfolioanalytics/summary', { params: { scope } }),
@@ -55,7 +56,7 @@ export default function WealthDashboard() {
             setSnapshots(snapshotsRes.data);
             setBalance(dashRes.data?.currentBalance ?? 0);
         }).catch(() => { }).finally(() => setLoading(false));
-    }, [scope]);
+    }, [scope, user]);
 
     const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
     const tickColor = isDark ? '#6b7394' : '#7c8298';
@@ -78,11 +79,17 @@ export default function WealthDashboard() {
                 <h1 className="dash-title">Wealth Dashboard</h1>
                 <div className="dash-filters">
                     {isCouple && (
-                        <select className="dash-filter-select" style={{ background: 'var(--primary-color)', color: 'white', border: 'none' }} value={scope} onChange={e => setScope(e.target.value)}>
-                            <option value="Mine">Mine</option>
-                            <option value="Partner">Partner</option>
-                            <option value="Combined">Combined</option>
-                        </select>
+                        <ModernDropdown
+                            style={{ background: 'var(--primary-color)', color: 'white', border: 'none' }}
+                            value={scope}
+                            onChange={e => setScope(e.target.value)}
+                            options={[
+                                { value: 'Mine', label: 'Mine' },
+                                { value: 'Partner', label: 'Partner' },
+                                { value: 'Combined', label: 'Combined' }
+                            ]}
+                            placeholder="Select Scope"
+                        />
                     )}
                     <Link to="/portfolio" className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '8px 16px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
                         Full Portfolio <FiChevronRight />
@@ -113,7 +120,7 @@ export default function WealthDashboard() {
                                 color: portfolio.overallPnL >= 0 ? '#10b981' : '#ef4444', fontWeight: 700, fontSize: isMobile ? '1rem' : '1.2rem'
                             }}>
                                 {portfolio.overallPnL >= 0 ? <FiArrowUpRight /> : <FiArrowDownRight />}
-                                ₹{Math.abs(portfolio.overallPnL).toLocaleString('en-IN')} ({portfolio.overallPnLPct.toFixed(2)}%)
+                                ₹{Math.abs(portfolio.overallPnL ?? 0).toLocaleString('en-IN')} ({portfolio.overallPnLPct?.toFixed(2) ?? '0.00'}%)
                             </div>
                             <p style={{ margin: '8px 0 0 0', fontSize: '0.85rem', opacity: 0.6 }}>Overall Return</p>
                         </div>
@@ -122,10 +129,10 @@ export default function WealthDashboard() {
                     {/* Invested / Cost / PnL Stat Row */}
                     <div className="wealth-hero-stats" style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                         {[
-                            { label: 'Invested', value: `₹${portfolio.totalInvested.toLocaleString('en-IN')}`, color: '#818cf8' },
-                            { label: 'Current Value', value: `₹${portfolio.currentValue.toLocaleString('en-IN')}`, color: '#c084fc' },
-                            { label: 'Total P&L', value: `${portfolio.overallPnL >= 0 ? '+' : ''}₹${portfolio.overallPnL.toLocaleString('en-IN')}`, color: portfolio.overallPnL >= 0 ? '#10b981' : '#ef4444' },
-                            { label: 'Holdings', value: portfolio.holdingsCount, color: '#f59e0b' },
+                            { label: 'Invested', value: `₹${(portfolio.totalInvested ?? 0).toLocaleString('en-IN')}`, color: '#818cf8' },
+                            { label: 'Current Value', value: `₹${(portfolio.currentValue ?? 0).toLocaleString('en-IN')}`, color: '#c084fc' },
+                            { label: 'Total P&L', value: `${(portfolio.overallPnL ?? 0) >= 0 ? '+' : ''}₹${(portfolio.overallPnL ?? 0).toLocaleString('en-IN')}`, color: (portfolio.overallPnL ?? 0) >= 0 ? '#10b981' : '#ef4444' },
+                            { label: 'Holdings', value: portfolio.holdingsCount ?? 0, color: '#f59e0b' },
                         ].map(({ label, value, color }) => (
                             <div key={label} style={{ flex: '1 1 120px', padding: '12px 16px', background: 'rgba(255,255,255,0.04)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)' }}>
                                 <p style={{ margin: 0, fontSize: '0.75rem', opacity: 0.6, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</p>
@@ -189,9 +196,9 @@ export default function WealthDashboard() {
                         <div className="wealth-donut-container">
                             <Doughnut
                                 data={{
-                                    labels: Object.keys(portfolio.allocation),
+                                    labels: Object.keys(portfolio.allocation || {}),
                                     datasets: [{
-                                        data: Object.values(portfolio.allocation),
+                                        data: Object.values(portfolio.allocation || {}),
                                         backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#0ea5e9'],
                                         borderWidth: 0,
                                         hoverOffset: 8
@@ -212,7 +219,7 @@ export default function WealthDashboard() {
 
                         {isMobile && (
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginTop: '16px' }}>
-                                {Object.keys(portfolio.allocation).map((label, i) => (
+                                {Object.keys(portfolio.allocation || {}).map((label, i) => (
                                     <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: tickColor }}>
                                         <div style={{ width: 8, height: 8, borderRadius: '50%', background: ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#0ea5e9'][i % 7] }} />
                                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
@@ -228,19 +235,19 @@ export default function WealthDashboard() {
                             <span className="dash-panel-title" style={{ color: '#10b981' }}><FiArrowUpRight /> Top Performers</span>
                         </div>
                         <div className="dash-tx-list-slim" style={{ marginTop: '10px' }}>
-                            {portfolio.topGainers.map((g, i) => (
+                            {(portfolio.topGainers || []).map((g, i) => (
                                 <div key={i} className="dash-tx-row-slim">
                                     <div className="dash-tx-info-slim">
                                         <p className="dash-tx-title-slim">{g.name}</p>
                                         <p className="dash-tx-sub-slim">{g.ticker || 'Mutual Fund'}</p>
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
-                                        <p className="dash-tx-amount-slim" style={{ color: '#10b981' }}>+₹{g.overallPnL.toLocaleString('en-IN')}</p>
-                                        <p className="dash-tx-sub-slim" style={{ color: '#10b981' }}>+{g.overallPnLPct.toFixed(1)}%</p>
+                                        <p className="dash-tx-amount-slim" style={{ color: '#10b981' }}>+₹{(g.overallPnL ?? 0).toLocaleString('en-IN')}</p>
+                                        <p className="dash-tx-sub-slim" style={{ color: '#10b981' }}>+{g.overallPnLPct?.toFixed(1) ?? '0.0'}%</p>
                                     </div>
                                 </div>
                             ))}
-                            {portfolio.topGainers.length === 0 && <p style={{ textAlign: 'center', opacity: 0.5, padding: '20px' }}>No gainers found</p>}
+                            {(portfolio.topGainers || []).length === 0 && <p style={{ textAlign: 'center', opacity: 0.5, padding: '20px' }}>No gainers found</p>}
                         </div>
                     </div>
 
@@ -250,19 +257,19 @@ export default function WealthDashboard() {
                             <span className="dash-panel-title" style={{ color: '#ef4444' }}><FiArrowDownRight /> Underperformers</span>
                         </div>
                         <div className="dash-tx-list-slim" style={{ marginTop: '10px' }}>
-                            {portfolio.topLosers.map((g, i) => (
+                            {(portfolio.topLosers || []).map((g, i) => (
                                 <div key={i} className="dash-tx-row-slim">
                                     <div className="dash-tx-info-slim">
                                         <p className="dash-tx-title-slim">{g.name}</p>
                                         <p className="dash-tx-sub-slim">{g.ticker || 'Mutual Fund'}</p>
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
-                                        <p className="dash-tx-amount-slim" style={{ color: '#ef4444' }}>-₹{Math.abs(g.overallPnL).toLocaleString('en-IN')}</p>
-                                        <p className="dash-tx-sub-slim" style={{ color: '#ef4444' }}>{g.overallPnLPct.toFixed(1)}%</p>
+                                        <p className="dash-tx-amount-slim" style={{ color: '#ef4444' }}>-₹{Math.abs(g.overallPnL ?? 0).toLocaleString('en-IN')}</p>
+                                        <p className="dash-tx-sub-slim" style={{ color: '#ef4444' }}>{g.overallPnLPct?.toFixed(1) ?? '0.0'}%</p>
                                     </div>
                                 </div>
                             ))}
-                            {portfolio.topLosers.length === 0 && <p style={{ textAlign: 'center', opacity: 0.5, padding: '20px' }}>No underperformers</p>}
+                            {(portfolio.topLosers || []).length === 0 && <p style={{ textAlign: 'center', opacity: 0.5, padding: '20px' }}>No underperformers</p>}
                         </div>
                     </div>
                 </div>

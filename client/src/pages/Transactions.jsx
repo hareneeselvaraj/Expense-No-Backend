@@ -6,76 +6,8 @@ import ConfirmModal from '../components/ConfirmModal';
 import DownloadCenter from '../components/DownloadCenter';
 import { downloadPDF, downloadExcel } from '../utils/downloadUtils';
 import useDeviceDetect from '../hooks/useDeviceDetect';
+import ModernDropdown from '../components/ModernDropdown';
 
-const CustomFilterDropdown = ({ value, onChange, options, style }) => {
-    const [open, setOpen] = useState(false);
-    const wrapperRef = useRef(null);
-
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-                setOpen(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [wrapperRef]);
-
-    const selected = options.find(o => String(o.value) === String(value)) || options[0];
-
-    return (
-        <div ref={wrapperRef} style={{ position: 'relative', width: 'auto', minWidth: '130px' }}>
-            <div
-                className="tx-select-minimal"
-                onClick={() => setOpen(!open)}
-                style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    ...style, userSelect: 'none', width: '100%', gap: '8px'
-                }}
-            >
-                <span style={{ flex: 1, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {selected?.label}
-                </span>
-                <FiChevronDown style={{ flexShrink: 0, opacity: 0.7, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
-            </div>
-
-            {open && (
-                <div className="custom-dropdown-menu" style={{
-                    position: 'absolute', top: '100%', left: 0, marginTop: '6px',
-                    width: '100%', minWidth: 'max-content', background: 'var(--bg-card)',
-                    border: '1px solid var(--border)', borderRadius: 12,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.3)', zIndex: 100,
-                    maxHeight: '280px', overflowY: 'auto', padding: '6px 0',
-                    animation: 'fadeIn 0.15s ease-out'
-                }}>
-                    {options.map((opt, i) => {
-                        const isSelected = String(value) === String(opt.value);
-                        return (
-                            <div key={i}
-                                onClick={() => { onChange(opt.value); setOpen(false); }}
-                                style={{
-                                    padding: '10px 16px', fontSize: '0.85rem', fontWeight: isSelected ? 600 : 400,
-                                    color: isSelected ? 'var(--primary)' : 'var(--text)',
-                                    background: isSelected ? 'rgba(99,102,241,0.1)' : 'transparent',
-                                    cursor: 'pointer', whiteSpace: 'nowrap',
-                                    transition: 'background 0.1s'
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (!isSelected) e.target.style.background = 'var(--bg-card-hover)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (!isSelected) e.target.style.background = 'transparent';
-                                }}
-                            >
-                                {opt.label}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
-    );
-};
 
 const MONTHS = [
     { value: '', label: 'All Months' },
@@ -291,27 +223,60 @@ export default function Transactions() {
                 categories={categories}
             />
 
-            <div className="page-header" style={{ marginBottom: 20, gap: 12 }}>
-                <h1 className="page-title" style={{ fontSize: isMobile ? '1.5rem' : '1.8rem', margin: 0 }}>Transactions</h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: isMobile ? 'nowrap' : 'wrap', width: isMobile ? '100%' : 'auto' }} className={isMobile ? "m-scroll-row" : ""}>
+            <div className="page-header" style={{ 
+                marginBottom: 20, 
+                gap: 12,
+                flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'flex-start' : 'center'
+            }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: isMobile ? 12 : 0 }}>
+                    <h1 className="page-title" style={{ fontSize: isMobile ? '1.4rem' : '1.8rem', fontWeight: 800, margin: 0, letterSpacing: '-0.02em', color: 'var(--text)' }}>Transactions</h1>
+                    <div style={{ display: 'flex', gap: 10 }}>
+                        <button 
+                            className="btn-upload-compact" 
+                            onClick={() => setShowUpload(true)}
+                            style={{ 
+                                display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 10,
+                                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', 
+                                color: 'var(--text)', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s'
+                            }}
+                        >
+                            <FiUpload style={{ fontSize: '1rem' }} /> <span>Upload</span>
+                        </button>
+                        {!isMobile && (
+                            <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(!showForm); }} style={{ height: 40, borderRadius: 12, padding: '0 20px', fontWeight: 700, boxShadow: '0 8px 16px var(--primary-shadow)', whiteSpace: 'nowrap' }}>
+                                <FiPlus /> New
+                            </button>
+                        )}
+                    </div>
+                </div>
+                
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 12, 
+                    flexWrap: 'wrap', 
+                    width: '100%',
+                    justifyContent: 'space-between'
+                }}>
                     <div className="tx-premium-filters" style={{
                         display: 'flex', alignItems: 'center', gap: 12, background: 'var(--bg-card)', padding: '6px 12px',
                         borderRadius: 16, border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', flexWrap: isMobile ? 'nowrap' : 'wrap'
                     }}>
                         <div style={{ display: 'flex', gap: 4 }}>
-                            <CustomFilterDropdown
+                            <ModernDropdown
                                 value={filterMonth} onChange={(val) => setFilterMonth(val)} options={MONTHS}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', outline: 'none' }}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '0.82rem', fontWeight: 600, minWidth: '90px' }}
                             />
-                            <CustomFilterDropdown
+                            <ModernDropdown
                                 value={filterYear} onChange={(val) => setFilterYear(val)}
                                 options={[{ value: '', label: 'All Years' }, ...years.map(y => ({ value: y, label: String(y) }))]}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', outline: 'none' }}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '0.82rem', fontWeight: 600, minWidth: '90px' }}
                             />
                         </div>
                         <div style={{ width: 1, height: 18, background: 'var(--border)' }} />
                         <div style={{ display: 'flex', gap: 8 }}>
-                            <CustomFilterDropdown
+                            <ModernDropdown
                                 value={filterType} onChange={(val) => setFilterType(val)}
                                 options={[
                                     { value: '', label: 'All Types' },
@@ -321,35 +286,33 @@ export default function Transactions() {
                                     { value: 'Investment', label: 'Investment' },
                                     { value: 'Withdraw', label: 'Withdraw' }
                                 ]}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', cursor: 'pointer', outline: 'none' }}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', minWidth: '100px' }}
                             />
-                            <CustomFilterDropdown
+                            <ModernDropdown
                                 value={filterAccount} onChange={(val) => setFilterAccount(val)}
                                 options={[{ value: '', label: 'All Accounts' }, ...accounts.map(a => ({ value: a.id, label: a.name }))]}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', cursor: 'pointer', outline: 'none' }}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', minWidth: '110px' }}
                             />
-                            <CustomFilterDropdown
+                            <ModernDropdown
                                 value={filterCategory} onChange={(val) => setFilterCategory(val)}
                                 options={[{ value: '', label: 'All Categories' }, ...categories.map(c => ({ value: c.id, label: c.name }))]}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', cursor: 'pointer', outline: 'none' }}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', minWidth: '120px' }}
                             />
-                            <CustomFilterDropdown
+                            <ModernDropdown
                                 value={filterTag} onChange={(val) => setFilterTag(val)}
                                 options={[{ value: '', label: 'All Tags' }, ...tags.map(t => ({ value: t.id, label: t.name }))]}
-                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', cursor: 'pointer', outline: 'none' }}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.82rem', minWidth: '100px' }}
                             />
                         </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 10 }}>
-                        <button className="btn btn-primary" onClick={() => setShowUpload(true)} style={{ height: 42, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)', boxShadow: 'none', whiteSpace: 'nowrap' }}>
-                            <FiUpload /> Upload
-                        </button>
-                        <button className="btn btn-primary" onClick={() => { resetForm(); setShowForm(!showForm); }} style={{ height: 42, borderRadius: 14, padding: '0 24px', fontWeight: 700, boxShadow: '0 8px 16px var(--primary-shadow)', whiteSpace: 'nowrap' }}>
-                            <FiPlus /> New
-                        </button>
-                    </div>
                 </div>
             </div>
+
+            {isMobile && (
+                <button className="m-fab-add" onClick={() => { resetForm(); setShowForm(true); }} aria-label="New Transaction">
+                    <FiPlus />
+                </button>
+            )}
 
             {selectedIds.size > 0 && (
                 <div className="bulk-actions-bar" style={{
@@ -368,15 +331,17 @@ export default function Transactions() {
 
             {showUpload && (
                 <div className="modal-overlay" onClick={() => { setShowUpload(false); setUploadFile(null); setUploadAccount(''); }}>
-                    <div className="modal-card" style={{ maxWidth: 450, padding: 32 }} onClick={e => e.stopPropagation()}>
+                    <div className="modal-card" style={{ width: '90%', maxWidth: 450, padding: isMobile ? '24px 20px' : 32 }} onClick={e => e.stopPropagation()}>
                         <h3 className="modal-title">Upload Transactions</h3>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginBottom: 24 }}>Upload Excel (.xlsx) or PDF statements.</p>
                         <div className="form-group" style={{ marginBottom: 20 }}>
-                            <label>Select Account</label>
-                            <select className="form-input" style={{ background: 'var(--bg-card)' }} value={uploadAccount} onChange={e => setUploadAccount(e.target.value)}>
-                                <option value="">Select an account...</option>
-                                {accounts.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-                            </select>
+                            <p style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: 8, color: 'var(--text-muted)', letterSpacing: 0.5 }}>Select Account</p>
+                            <ModernDropdown
+                                value={uploadAccount}
+                                onChange={val => setUploadAccount(val)}
+                                options={[{ value: '', label: 'Select an account...' }, ...accounts.map(a => ({ value: a.id, label: a.name }))]}
+                                placeholder="Choose Account"
+                            />
                         </div>
                         <div style={{
                             border: '2px dashed rgba(255,255,255,0.1)', borderRadius: 16, padding: '32px 16px', textAlign: 'center',
@@ -399,7 +364,7 @@ export default function Transactions() {
                         </div>
                         <div style={{ display: 'flex', gap: 12 }}>
                             <button className="btn btn-full" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text)' }} onClick={() => { setShowUpload(false); setUploadFile(null); setUploadAccount(''); }}>Cancel</button>
-                            <button className="btn btn-primary btn-full" disabled={!uploadFile || !uploadAccount || uploading} onClick={async () => {
+                            <button className="btn btn-primary btn-full" disabled={!uploadFile || !uploadAccount || uploading} style={{ height: 48, borderRadius: 12, fontWeight: 700, fontSize: '1rem', boxShadow: '0 8px 20px var(--primary-shadow)' }} onClick={async () => {
                                 setUploading(true);
                                 const formData = new FormData();
                                 formData.append('file', uploadFile);
@@ -439,7 +404,7 @@ export default function Transactions() {
 
             {showForm && (
                 <div className="modal-overlay" onClick={resetForm}>
-                    <div className="modal-card" style={{ maxWidth: 520, textAlign: 'left', padding: '24px 28px' }} onClick={e => e.stopPropagation()}>
+                    <div className="modal-card" style={{ width: '95%', maxWidth: 520, textAlign: 'left', padding: isMobile ? '20px 16px' : '24px 28px' }} onClick={e => e.stopPropagation()}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>{editing ? 'Edit Transaction' : 'New Transaction'}</h3>
                             <button onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '1.2rem' }}>✕</button>
@@ -447,70 +412,95 @@ export default function Transactions() {
                         <form onSubmit={handleSubmit} className="form-grid">
                             <div className="form-group">
                                 <label>Account</label>
-                                <select value={form.accountId} onChange={(e) => setForm({ ...form, accountId: e.target.value })} required>
-                                    <option value="">Select Account</option>
-                                    {accounts.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-                                </select>
+                                <ModernDropdown
+                                    value={form.accountId}
+                                    onChange={val => setForm({ ...form, accountId: val })}
+                                    options={[{ value: '', label: 'Select Account' }, ...accounts.map(a => ({ value: a.id, label: a.name }))]}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Type</label>
+                                <ModernDropdown
+                                    value={form.type}
+                                    onChange={val => setForm({ ...form, type: val })}
+                                    options={[
+                                        { value: 'Expense', label: 'Expense' },
+                                        { value: 'Income', label: 'Income' },
+                                        { value: 'Transfer', label: 'Transfer' },
+                                        { value: 'Investment', label: 'Investment' },
+                                        { value: 'Withdraw', label: 'Withdraw' }
+                                    ]}
+                                />
                             </div>
                             <div className="form-group">
                                 <label>Category</label>
-                                <select value={form.categoryId} onChange={(e) => {
-                                    const catId = e.target.value;
-                                    const selectedCat = categories.find(c => c.id === catId);
-                                    setForm({ ...form, categoryId: catId, type: selectedCat ? selectedCat.type : form.type });
-                                }} required>
-                                    <option value="">Select Category</option>
-                                    {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                </select>
+                                <ModernDropdown
+                                    value={form.categoryId}
+                                    onChange={val => {
+                                        const catId = val;
+                                        const selectedCat = categories.find(c => c.id === catId);
+                                        setForm({ ...form, categoryId: catId, type: selectedCat ? selectedCat.type : form.type });
+                                    }}
+                                    options={[{ value: '', label: 'Select Category' }, ...categories.map(c => ({ value: c.id, label: c.name }))]}
+                                />
                             </div>
                             <div className="form-group">
                                 <label>Amount</label>
                                 <input type="number" step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
                             </div>
                             <div className="form-group">
-                                <label>Type</label>
-                                <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-                                    <option value="Income">Income</option>
-                                    <option value="Expense">Expense</option>
-                                    <option value="Transfer">Transfer</option>
-                                    <option value="Investment">Investment</option>
-                                    <option value="Withdraw">Withdraw</option>
-                                </select>
+                                <label>Online / Offline</label>
+                                <ModernDropdown
+                                    value={form.onlineOffline}
+                                    onChange={val => setForm({ ...form, onlineOffline: val })}
+                                    options={[
+                                        { value: 'Offline', label: 'Offline' },
+                                        { value: 'Online', label: 'Online' }
+                                    ]}
+                                />
                             </div>
                             <div className="form-group">
-                                <label>Online / Offline</label>
-                                <select value={form.onlineOffline} onChange={(e) => setForm({ ...form, onlineOffline: e.target.value })}>
-                                    <option value="Offline">Offline</option>
-                                    <option value="Online">Online</option>
-                                </select>
+                                <label>Tag</label>
+                                <ModernDropdown
+                                    value={form.tagId}
+                                    onChange={val => setForm({ ...form, tagId: val })}
+                                    options={[{ value: '', label: 'Select Tag' }, ...tags.map(t => ({ value: t.id, label: t.name }))]}
+                                />
                             </div>
                             {form.onlineOffline === 'Online' && (
                                 <div className="form-group">
                                     <label>Bank Mode</label>
-                                    <select value={form.bankMode} onChange={(e) => setForm({ ...form, bankMode: e.target.value })}>
-                                        <option value="NetBanking">Net Banking</option>
-                                        <option value="Debit">Debit Card</option>
-                                        <option value="Credit">Credit Card</option>
-                                        <option value="GPay">GPay / UPI</option>
-                                    </select>
+                                    <ModernDropdown
+                                        value={form.bankMode}
+                                        onChange={val => setForm({ ...form, bankMode: val })}
+                                        options={[
+                                            { value: '', label: 'Select Bank Mode' },
+                                            { value: 'UPI', label: 'UPI' },
+                                            { value: 'NetBanking', label: 'Net Banking' },
+                                            { value: 'Card', label: 'Card' },
+                                            { value: 'Cash', label: 'Cash' }
+                                        ]}
+                                    />
                                 </div>
                             )}
                             {form.type === 'Transfer' && (
                                 <div className="form-group">
                                     <label>Transfer To</label>
-                                    <select value={form.transferAccountId} onChange={(e) => setForm({ ...form, transferAccountId: e.target.value })} required>
-                                        <option value="">Select Account</option>
-                                        {accounts.filter((a) => a.id !== form.accountId).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-                                    </select>
+                                    <ModernDropdown
+                                        value={form.transferAccountId}
+                                        onChange={val => setForm({ ...form, transferAccountId: val })}
+                                        options={[{ value: '', label: 'Select Destination Account' }, ...accounts.filter((a) => a.id !== form.accountId).map(a => ({ value: a.id, label: a.name }))]}
+                                    />
                                 </div>
                             )}
                             {(form.type === 'Investment' || (form.type === 'Expense' && form.isAutoDebit)) && (
                                 <div className="form-group">
                                     <label>Link to Investment</label>
-                                    <select value={form.investmentId} onChange={(e) => setForm({ ...form, investmentId: e.target.value })}>
-                                        <option value="">None</option>
-                                        {investments.map((inv) => <option key={inv.id} value={inv.id}>{inv.name} ({inv.assetType})</option>)}
-                                    </select>
+                                    <ModernDropdown
+                                        value={form.investmentId}
+                                        onChange={val => setForm({ ...form, investmentId: val })}
+                                        options={[{ value: '', label: 'Select Investment' }, ...investments.map(i => ({ value: i.id, label: `${i.name} (${i.assetType})` }))]}
+                                    />
                                 </div>
                             )}
                             <div className="form-group">

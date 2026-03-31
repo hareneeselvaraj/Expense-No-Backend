@@ -1,12 +1,12 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CoupleProvider } from './context/CoupleContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './components/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Accounts from './pages/Accounts';
@@ -28,6 +28,18 @@ import TaxReports from './pages/TaxReports';
 import TaxAdvisor from './pages/TaxAdvisor';
 import StatementImport from './pages/StatementImport';
 import WealthDashboard from './pages/WealthDashboard';
+import Migrate from './pages/Migrate';
+import Settings from './pages/Settings';
+
+function SIPRunner() {
+    const { user } = useAuth();
+    useEffect(() => {
+        if (user) {
+            import('./services/sipCatchup.js').then(m => m.executeSIPCatchup());
+        }
+    }, [user]);
+    return null;
+}
 
 export default function App() {
     return (
@@ -45,9 +57,9 @@ export default function App() {
                         }}>
                             <Routes>
                                 <Route path="/login" element={<Login />} />
-                                <Route path="/register" element={<Register />} />
+                                <Route path="/migrate" element={<Migrate />} />
                                 <Route path="/sips" element={<MutualFunds />} /> {/* Legacy route alias */}
-                                <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                                <Route element={<ProtectedRoute><><SIPRunner /><Layout /></></ProtectedRoute>}>
                                     <Route path="/" element={<Dashboard />} />
                                     <Route path="/wealth" element={<WealthDashboard />} />
                                     <Route path="/transactions" element={<Transactions />} />
@@ -69,6 +81,7 @@ export default function App() {
                                     <Route path="/reminders" element={<UpcomingReminders />} />
                                     <Route path="/history" element={<History />} />
                                     <Route path="/couple" element={<Couple />} />
+                                    <Route path="/settings" element={<Settings />} />
                                 </Route>
                             </Routes>
                         </BrowserRouter>

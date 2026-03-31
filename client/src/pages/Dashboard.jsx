@@ -11,6 +11,7 @@ import {
     FiBell, FiClock, FiBarChart2,
     FiShield, FiTarget, FiTrendingDown, FiCheckCircle, FiAlertTriangle, FiAlertCircle, FiXCircle, FiSettings, FiPieChart
 } from 'react-icons/fi';
+import ModernDropdown from '../components/ModernDropdown';
 import {
     Chart as ChartJS,
     CategoryScale, LinearScale, BarElement, PointElement, LineElement,
@@ -275,6 +276,7 @@ export default function Dashboard() {
     }, [data, loading, tempThresholds, totalInvestments]);
 
     useEffect(() => {
+        if (!user) return;
         const monthMap = { 'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12 };
         const mIdx = monthMap[month];
 
@@ -309,7 +311,7 @@ export default function Dashboard() {
             const total = res.data.reduce((acc, cur) => acc + (cur.investedAmount || 0), 0);
             setTotalInvestments(total);
         }).catch(() => { });
-    }, [month, year, account, scope]);
+    }, [month, year, account, scope, user]);
 
 
 
@@ -485,22 +487,40 @@ export default function Dashboard() {
             <div className="dash-top-bar">
                 <h1 className="dash-title">Expense Dashboard</h1>
                 <div className="dash-filters">
-                    <select className="dash-filter-select" value={account} onChange={e => setAccount(e.target.value)}>
-                        <option value="All Accounts">All Accounts</option>
-                        {data?.accounts?.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-                    </select>
-                    <select className="dash-filter-select" value={month} onChange={e => setMonth(e.target.value)}>
-                        {MONTHS.map(m => <option key={m}>{m}</option>)}
-                    </select>
-                    <select className="dash-filter-select" value={year} onChange={e => setYear(e.target.value)}>
-                        {YEARS.map(y => <option key={y}>{y}</option>)}
-                    </select>
+                    <ModernDropdown
+                        className="dash-filter-modern"
+                        value={account}
+                        onChange={val => setAccount(val)}
+                        options={[{ value: 'All Accounts', label: 'All Accounts' }, ...(data?.accounts?.map(a => ({ value: a.id, label: a.name })) || [])]}
+                        placeholder="Select Account"
+                    />
+                    <ModernDropdown
+                        className="dash-filter-modern"
+                        value={month}
+                        onChange={val => setMonth(val)}
+                        options={MONTHS.map(m => ({ value: m, label: m }))}
+                        placeholder="Select Month"
+                    />
+                    <ModernDropdown
+                        className="dash-filter-modern"
+                        value={year}
+                        onChange={val => setYear(val)}
+                        options={YEARS.map(y => ({ value: y, label: y }))}
+                        placeholder="Select Year"
+                    />
                     {isCouple && (
-                        <select className="dash-filter-select" style={{ background: 'var(--primary-color)', color: 'white', border: 'none' }} value={scope} onChange={e => setScope(e.target.value)}>
-                            <option value="Mine">Mine</option>
-                            <option value="Partner">Partner</option>
-                            <option value="Combined">Combined</option>
-                        </select>
+                        <ModernDropdown
+                            className="dash-filter-modern"
+                            style={{ background: 'var(--primary)', border: 'none' }}
+                            value={scope}
+                            onChange={val => setScope(val)}
+                            options={[
+                                { value: 'Mine', label: 'Mine' },
+                                { value: 'Partner', label: 'Partner' },
+                                { value: 'Combined', label: 'Combined' }
+                            ]}
+                            placeholder="Select Scope"
+                        />
                     )}
                     <button className="dash-filter-icon-btn"><FiRefreshCw /></button>
                     <Link to="/wealth" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: 'rgba(99,102,241,0.1)', color: '#818cf8', fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none', border: '1px solid rgba(99,102,241,0.2)', whiteSpace: 'nowrap' }}>

@@ -57,6 +57,7 @@ export default function Sidebar() {
         { to: '/mileage', icon: <FiTruck />, label: 'Mileage' },
         { to: '/ai-insights', icon: <FiCpu />, label: 'AI Insights' },
         { to: '/couple', icon: <FiUsers />, label: 'Shared Finance', badge: isCouple },
+        { to: '/settings', icon: <FiSettings />, label: 'Settings' },
     ];
 
     return (

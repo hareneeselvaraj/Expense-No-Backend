@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FiMenu, FiHome, FiCreditCard, FiPieChart, FiTrendingUp, FiCpu, FiX, FiSearch, FiBell } from 'react-icons/fi';
+import { FiMenu, FiHome, FiCreditCard, FiPieChart, FiTrendingUp, FiCpu, FiX, FiSearch, FiBell, FiSettings } from 'react-icons/fi';
 import Sidebar from './Sidebar';
 import FloatingCalculator from './FloatingCalculator';
 import AIChat from './AI/AIChat';
@@ -44,9 +44,14 @@ export default function MobileLayout() {
                     <span className="m-brand-icon">💰</span>
                     <span className="m-brand-text">ExpenseTracker</span>
                 </div>
-                <button className="m-header-btn" onClick={() => navigate('/ai-insights')} aria-label="Notifications">
-                    <FiBell size={20} />
-                </button>
+                <div className="m-header-actions" style={{ display: 'flex', gap: '8px' }}>
+                    <button className="m-header-btn" onClick={() => navigate('/ai-insights')} aria-label="Notifications">
+                        <FiBell size={20} />
+                    </button>
+                    <button className="m-header-btn" onClick={() => navigate('/settings')} aria-label="Settings">
+                        <FiSettings size={20} />
+                    </button>
+                </div>
             </header>
 
             {/* ─── DRAWER OVERLAY ─── */}

@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo, useCallback, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 import {
     FiPlus, FiTrash2, FiDollarSign, FiTrendingDown,
     FiCheckCircle, FiAlertTriangle, FiAlertCircle, FiXCircle,
-    FiChevronLeft, FiChevronRight, FiX, FiShield
+    FiChevronLeft, FiChevronRight, FiX, FiShield, FiPieChart
 } from 'react-icons/fi';
 import { useToast } from '../components/Toast';
 import useDeviceDetect from '../hooks/useDeviceDetect';
+import ModernDropdown from '../components/ModernDropdown';
 
 import ConfirmModal from '../components/ConfirmModal';
 import AIBudgetSetup from '../components/AIBudgetSetup';
@@ -205,14 +207,23 @@ export default function Budgets() {
 
                     <p className="page-subtitle">Track and manage your monthly spending limits</p>
                 </div>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <div className="dash-filters" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                     {isCouple && (
-                        <select className="dash-filter-select" style={{ background: 'var(--primary-color)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px' }} value={scope} onChange={e => setScope(e.target.value)}>
-                            <option value="Mine">Mine</option>
-                            <option value="Partner">Partner</option>
-                            <option value="Combined">Combined</option>
-                        </select>
+                        <ModernDropdown
+                            style={{ background: 'var(--primary-color)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px' }}
+                            value={scope}
+                            onChange={val => setScope(val)}
+                            options={[
+                                { value: 'Mine', label: 'Mine' },
+                                { value: 'Partner', label: 'Partner' },
+                                { value: 'Combined', label: 'Combined' }
+                            ]}
+                            placeholder="Select Scope"
+                        />
                     )}
+                    <Link to="/wealth" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, background: 'rgba(99,102,241,0.1)', color: '#818cf8', fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none', border: '1px solid rgba(99,102,241,0.2)', whiteSpace: 'nowrap' }}>
+                        <FiPieChart /> Wealth Dashboard
+                    </Link>
                     <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
                         <FiPlus /> New Budget
                     </button>
@@ -279,12 +290,11 @@ export default function Budgets() {
                     <form onSubmit={handleSubmit} className="form-grid">
                         <div className="form-group">
                             <label>Category</label>
-                            <select value={form.categoryId} onChange={e => setForm({ ...form, categoryId: e.target.value })} required>
-                                <option value="">Select Category</option>
-                                {categories.filter(c => c.type === 'Expense').map(c => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                ))}
-                            </select>
+                            <ModernDropdown
+                                value={form.categoryId}
+                                onChange={val => setForm({ ...form, categoryId: val })}
+                                options={[{ value: '', label: 'Select Category' }, ...categories.filter(c => c.type === 'Expense').map(c => ({ value: c.id, label: c.name }))]}
+                            />
                         </div>
                         <div className="form-group">
                             <label>Budget Amount</label>
@@ -296,13 +306,11 @@ export default function Budgets() {
                         </div>
                         <div className="form-group">
                             <label>Month</label>
-                            <select value={form.month} onChange={e => setForm({ ...form, month: e.target.value })}>
-                                {[...Array(12)].map((_, i) => (
-                                    <option key={i + 1} value={i + 1}>
-                                        {new Date(2000, i).toLocaleString('default', { month: 'long' })}
-                                    </option>
-                                ))}
-                            </select>
+                            <ModernDropdown
+                                value={form.month}
+                                onChange={val => setForm({ ...form, month: val })}
+                                options={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => ({ value: String(m), label: new Date(2000, m - 1).toLocaleString('default', { month: 'long' }) }))}
+                            />
                         </div>
                         <div className="form-actions">
                             <button type="submit" className="btn btn-primary">Create Budget</button>
