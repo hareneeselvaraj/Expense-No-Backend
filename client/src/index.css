@@ -1118,41 +1118,57 @@ body.sidebar-collapsed .main-content {
 /* ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â TABLES ÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚ÂÃƒÂ¢Ã¢â‚¬Â¢Ã‚Â */
 .table-wrapper {
   overflow-x: auto;
+  background: var(--bg-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  background: var(--bg-card);
-  border-radius: var(--radius);
+  border-collapse: separate;
+  border-spacing: 0;
   overflow: hidden;
-  border: 1px solid var(--border);
 }
 
 th {
   text-align: left;
-  padding: 12px 16px;
+  padding: 14px 16px;
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-sidebar);
+  border-bottom: 2px solid var(--border);
+  background: rgba(15, 18, 25, 0.6);
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 td {
-  padding: 12px 16px;
+  padding: 14px 16px;
   font-size: 0.88rem;
   border-bottom: 1px solid var(--border);
-}
-
-tr:last-child td {
-  border-bottom: none;
+  transition: all 0.2s ease;
 }
 
 tr:hover td {
-  background: var(--bg-card-hover);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--primary-hover);
 }
 
 /* â”€â”€ Column Search Row â”€â”€ */
@@ -4986,9 +5002,10 @@ tr:hover td {
 }
 
 .dash-stat-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.45);
-  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(35, 40, 60, 0.75);
 }
 
 .dash-stat-card:hover .dash-stat-icon {
@@ -5013,15 +5030,24 @@ tr:hover td {
 }
 
 .dash-stat-balance {
-  border-bottom: 3px solid var(--primary);
+  border-bottom: 4px solid var(--primary);
+}
+.dash-stat-balance:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--primary-glow);
 }
 
 .dash-stat-expense {
-  border-bottom: 3px solid var(--red);
+  border-bottom: 4px solid var(--red);
+}
+.dash-stat-expense:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--red-glow);
 }
 
 .dash-stat-income {
-  border-bottom: 3px solid var(--green);
+  border-bottom: 4px solid var(--green);
+}
+.dash-stat-income:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--green-glow);
 }
 
 .dash-stat-info {
@@ -12587,6 +12613,7 @@ tr:hover td {
   border-radius: var(--radius-sm);
   cursor: pointer;
   margin: 0 -10px; /* offset inner padding */
+  touch-action: manipulation;
 }
 
 .m-header-brand {
@@ -12700,6 +12727,7 @@ tr:hover td {
   padding: 10px 8px calc(10px + env(safe-area-inset-bottom)) 8px;
   z-index: 1000;
   backdrop-filter: blur(12px);
+  touch-action: manipulation;
 }
 
 .m-tab {
@@ -12715,6 +12743,7 @@ tr:hover td {
   min-height: 48px;
   cursor: pointer;
   transition: var(--transition);
+  touch-action: manipulation;
 }
 
 .m-tab-icon {
@@ -14055,36 +14084,58 @@ tr:hover td {
 }
 
 .mobile-mode .dash-stat-row {
-  grid-template-columns: 1fr 1fr !important;
+  grid-template-columns: 1fr !important;
   gap: 12px !important;
-  margin-bottom: 24px !important;
+  margin-bottom: 20px !important;
 }
 
 .mobile-mode .dash-stat-balance {
   grid-column: 1 / -1 !important;
-  padding: 22px !important;
+  padding: 18px 16px !important;
 }
 
 .mobile-mode .dash-stat-card {
-  padding: 16px !important;
-  min-height: 110px !important;
+  padding: 14px 16px !important;
+  min-height: auto !important;
   display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   position: relative !important;
+  overflow: visible !important;
+  border-radius: 16px !important;
+  gap: 12px !important;
+}
+
+.mobile-mode .dash-stat-card:hover {
+  transform: none !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
 }
 
 .mobile-mode .dash-stat-amount {
-  font-size: 1.3rem !important;
-  margin-top: 4px !important;
+  font-size: 1.2rem !important;
+  margin-top: 2px !important;
+}
+
+.mobile-mode .dash-stat-label {
+  font-size: 0.8rem !important;
+}
+
+.mobile-mode .dash-stat-sub {
+  font-size: 0.65rem !important;
 }
 
 .mobile-mode .dash-stat-card .circle-ring {
-  position: absolute !important;
-  right: 12px !important;
-  top: 50% !important;
-  transform: translateY(-50%) scale(0.75) !important;
-  transform-origin: right center !important;
+  flex-shrink: 0 !important;
+  position: static !important;
+  transform: scale(0.7) !important;
+  transform-origin: center !important;
+}
+
+/* Hide floating calculator on mobile entirely */
+.mobile-mode .floating-calc-btn,
+.mobile-mode .floating-calc-panel {
+  display: none !important;
 }
 
 .mobile-mode .dash-mid-grid,
@@ -14192,13 +14243,14 @@ tr:hover td {
   max-width: 100vw !important;
   max-height: 50vh !important;
   border-radius: 24px 24px 0 0 !important;
-  padding: 20px 10px 30px 10px !important;
+  padding: 20px 10px calc(30px + env(safe-area-inset-bottom)) 10px !important;
   z-index: 2000 !important;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4) !important;
   border: 1px solid var(--border) !important;
   border-bottom: none !important;
   animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   box-sizing: border-box !important;
+  overscroll-behavior: contain !important;
 }
 
 /* Fix appearance warning */
